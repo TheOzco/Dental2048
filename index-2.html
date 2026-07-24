@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>۲۰۴۸ دندونپزشکی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0F3D3E;
+    --bg-deep-2:#0B2E2F;
+    --cream:#FBF6EC;
+    --cream-dim:#EFE7D6;
+    --mint:#4FD1C5;
+    --mint-dark:#2E9C92;
+    --coral:#E85D4C;
+    --gold:#D4AF37;
+    --ink:#123130;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(79,209,197,0.12), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(212,175,55,0.10), transparent 45%),
+      var(--bg-deep);
+    color:var(--cream);
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px 14px 60px;
+  }
+
+  .chart-header{
+    width:100%;
+    max-width:460px;
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--mint);
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  h1{
+    font-size:26px;
+    font-weight:900;
+    margin:0 0 10px;
+    color:var(--cream);
+  }
+  h1 span{color:var(--mint);}
+
+  .jaw-progress{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:10px 0 4px;
+  }
+  .tooth-dot{
+    width:26px;height:30px;
+    border-radius:40% 40% 45% 45%;
+    background:var(--cream-dim);
+    opacity:.35;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;color:var(--ink);
+    transition:all .3s ease;
+  }
+  .tooth-dot.done{opacity:1;background:var(--mint);color:var(--ink);box-shadow:0 0 10px rgba(79,209,197,.6);}
+  .tooth-dot.current{opacity:1;background:var(--gold);color:var(--ink);transform:scale(1.15);box-shadow:0 0 12px rgba(212,175,55,.7);}
+
+  .stat-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin:10px 0 16px;
+  }
+  .stat-box{
+    background:var(--bg-deep-2);
+    border:1px solid rgba(79,209,197,.25);
+    border-radius:10px;
+    padding:6px 16px;
+    text-align:center;
+    min-width:84px;
+  }
+  .stat-box .lbl{font-size:11px;color:var(--mint);letter-spacing:1px;}
+  .stat-box .val{font-size:19px;font-weight:700;}
+
+  .goal-note{
+    font-size:12.5px;
+    color:var(--cream-dim);
+    opacity:.85;
+    max-width:380px;
+    margin:0 0 16px;
+    line-height:1.9;
+  }
+  .goal-note b{color:var(--gold);}
+
+  .board-wrap{
+    position:relative;
+    background:linear-gradient(160deg, var(--bg-deep-2), #082324);
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 20px 40px rgba(0,0,0,.35), inset 0 0 0 1px rgba(79,209,197,.15);
+  }
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(60px,78px));
+    grid-template-rows:repeat(4, minmax(60px,78px));
+    gap:10px;
+  }
+  .cell{
+    background:rgba(251,246,236,0.06);
+    border-radius:12px;
+  }
+  .board-tiles{
+    position:absolute;
+    inset:12px;
+    display:grid;
+    grid-template-columns:repeat(4, minmax(60px,78px));
+    grid-template-rows:repeat(4, minmax(60px,78px));
+    gap:10px;
+    pointer-events:none;
+  }
+  .tile{
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:2px;
+    font-weight:700;
+    text-align:center;
+    animation:pop .14s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+    padding:4px;
+    line-height:1.15;
+  }
+  @keyframes pop{from{transform:scale(.6);opacity:.4;}to{transform:scale(1);opacity:1;}}
+  .tile .icon{font-size:26px;}
+  .tile .name{font-size:9.5px;color:var(--ink);opacity:.85;}
+
+  .tile.v2{background:var(--cream);color:var(--ink);}
+  .tile.v4{background:#EAD9B8;color:var(--ink);}
+  .tile.v8{background:#B7E4DE;color:var(--ink);}
+  .tile.v16{background:#8FD4C9;color:var(--ink);}
+  .tile.v32{background:#4FD1C5;color:var(--ink);}
+  .tile.v64{background:#2E9C92;color:var(--cream);}
+  .tile.v128{background:#F0A94E;color:var(--ink);}
+  .tile.v256{background:#E8814C;color:var(--cream);}
+  .tile.v512{
+    background:linear-gradient(150deg, var(--gold), #F4E28C);
+    color:var(--ink);
+    box-shadow:0 0 18px rgba(212,175,55,.75), 0 4px 10px rgba(0,0,0,.25);
+  }
+  .tile.v512 .icon{font-size:30px;}
+  .tile.blocked{
+    background:repeating-linear-gradient(135deg, #3a1414, #3a1414 6px, #2a0d0d 6px, #2a0d0d 12px);
+    color:var(--coral);
+    border:2px solid var(--coral);
+  }
+  .tile.blocked .name{color:var(--coral);opacity:1;}
+
+  .controls{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  button{
+    font-family:inherit;
+    font-weight:700;
+    font-size:13.5px;
+    border:none;
+    border-radius:10px;
+    padding:10px 18px;
+    cursor:pointer;
+    background:var(--mint);
+    color:var(--ink);
+    transition:transform .12s ease, background .2s;
+  }
+  button:hover{transform:translateY(-1px);}
+  button.secondary{
+    background:transparent;
+    color:var(--cream);
+    border:1px solid rgba(251,246,236,.35);
+  }
+
+  .hint{
+    margin-top:14px;
+    font-size:11.5px;
+    color:var(--cream-dim);
+    opacity:.6;
+    text-align:center;
+  }
+
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(5,20,20,.86);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .overlay-card{
+    background:var(--bg-deep-2);
+    border:1px solid rgba(79,209,197,.3);
+    border-radius:16px;
+    padding:30px 26px;
+    max-width:340px;
+    text-align:center;
+  }
+  .overlay-card .big{font-size:44px;margin-bottom:6px;}
+  .overlay-card h2{margin:0 0 8px;font-size:20px;color:var(--gold);}
+  .overlay-card p{font-size:13.5px;color:var(--cream-dim);line-height:1.9;margin:0 0 18px;}
+
+  @media (max-width:380px){
+    .board{grid-template-columns:repeat(4, minmax(52px,66px));grid-template-rows:repeat(4, minmax(52px,66px));gap:8px;}
+    .board-tiles{grid-template-columns:repeat(4, minmax(52px,66px));grid-template-rows:repeat(4, minmax(52px,66px));gap:8px;inset:10px;}
+    .tile .icon{font-size:21px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="chart-header">
+    <div class="eyebrow">پرونده‌ی درمان</div>
+    <h1>۲۰۴۸ <span>دندونپزشکی</span></h1>
+    <div class="jaw-progress" id="jawProgress"></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-box"><div class="lbl">مرحله</div><div class="val" id="levelVal">۱ / ۵</div></div>
+    <div class="stat-box"><div class="lbl">امتیاز</div><div class="val" id="scoreVal">۰</div></div>
+    <div class="stat-box"><div class="lbl">رکورد</div><div class="val" id="bestVal">۰</div></div>
+  </div>
+
+  <div class="goal-note" id="goalNote">
+    دو تا <b>دندون سالم 🦷</b> رو تو هم ادغام کن تا بری مرحله بعد. مرحله‌ی اول یه <b>دندون خرابِ</b> مسدود بالا-راستِ جدول داره؛ نمی‌تونی اون خونه رو حرکت بدی!
+  </div>
+
+  <div class="board-wrap">
+    <div class="board" id="boardBg"></div>
+    <div class="board-tiles" id="boardTiles"></div>
+  </div>
+
+  <div class="controls">
+    <button id="restartBtn">شروع دوباره مرحله</button>
+    <button class="secondary" id="restartAllBtn">شروع کل بازی</button>
+  </div>
+
+  <div class="hint">با کلیدهای جهت‌دار یا کشیدن انگشت (موبایل) بازی کن</div>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-card">
+      <div class="big" id="overlayIcon">🦷</div>
+      <h2 id="overlayTitle">مرحله تکمیل شد!</h2>
+      <p id="overlayText">آفرین، دندون سالم ساختی.</p>
+      <button id="overlayBtn">برو مرحله بعد</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SIZE = 4;
+  var TOTAL_LEVELS = 5;
+  var WIN_VALUE = 1024; // created when two 512 (healthy tooth) tiles merge -> triggers level up
+
+  var TILE_INFO = {
+    2:   {icon:"🪥", name:"مسواک",              cls:"v2"},
+    4:   {icon:"🧴", name:"دهان‌شویه",           cls:"v4"},
+    8:   {icon:"🪞", name:"آینه دندونپزشکی",     cls:"v8"},
+    16:  {icon:"🗜️", name:"پنس",                cls:"v16"},
+    32:  {icon:"🌀", name:"توربین",              cls:"v32"},
+    64:  {icon:"👑", name:"روکش SS اطفال",       cls:"v64"},
+    128: {icon:"💉", name:"سرنگ تزریق",          cls:"v128"},
+    256: {icon:"🏥", name:"یونیت",               cls:"v256"},
+    512: {icon:"🦷", name:"دندون سالم",          cls:"v512"}
+  };
+  var BLOCKED = "X";
+
+  var faDigits = ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"];
+  function toFa(n){
+    return String(n).split("").map(function(d){
+      return /[0-9]/.test(d) ? faDigits[+d] : d;
+    }).join("");
+  }
+
+  var state = {
+    level: 1,
+    score: 0,
+    best: 0,
+    board: null, // 4x4 array: null | number | "X"
+    over: false
+  };
+
+  try {
+    var savedBest = localStorage.getItem("dental2048_best");
+    if (savedBest) state.best = parseInt(savedBest,10) || 0;
+  } catch(e){}
+
+  var boardBgEl = document.getElementById("boardBg");
+  var boardTilesEl = document.getElementById("boardTiles");
+  var levelValEl = document.getElementById("levelVal");
+  var scoreValEl = document.getElementById("scoreVal");
+  var bestValEl = document.getElementById("bestVal");
+  var jawProgressEl = document.getElementById("jawProgress");
+  var overlayEl = document.getElementById("overlay");
+  var overlayIconEl = document.getElementById("overlayIcon");
+  var overlayTitleEl = document.getElementById("overlayTitle");
+  var overlayTextEl = document.getElementById("overlayText");
+  var overlayBtnEl = document.getElementById("overlayBtn");
+
+  // build background cells once
+  for (var i=0;i<SIZE*SIZE;i++){
+    var c = document.createElement("div");
+    c.className = "cell";
+    boardBgEl.appendChild(c);
+  }
+
+  function emptyBoard(){
+    var b = [];
+    for (var r=0;r<SIZE;r++){
+      b.push([null,null,null,null]);
+    }
+    return b;
+  }
+
+  function startLevel(level){
+    state.level = level;
+    state.board = emptyBoard();
+    state.over = false;
+
+    if (level === 1){
+      state.board[0][3] = BLOCKED; // top-right blocked "bad tooth"
+    }
+
+    spawnRandom();
+    spawnRandom();
+    render();
+  }
+
+  function emptyCells(){
+    var cells = [];
+    for (var r=0;r<SIZE;r++){
+      for (var c=0;c<SIZE;c++){
+        if (state.board[r][c] === null) cells.push([r,c]);
+      }
+    }
+    return cells;
+  }
+
+  function spawnRandom(){
+    var cells = emptyCells();
+    if (cells.length === 0) return false;
+    var pick = cells[Math.floor(Math.random()*cells.length)];
+    state.board[pick[0]][pick[1]] = Math.random() < 0.9 ? 2 : 4;
+    return true;
+  }
+
+  // Slide+merge a single line (array of null|number|"X") to the left, returns {line, gained, moved, madeWin}
+  function processLineLeft(line){
+    var gained = 0;
+    var madeWin = false;
+    var moved = false;
+    var result = [];
+
+    // split into segments by blocked cells
+    var segments = [];
+    var current = [];
+    for (var i=0;i<line.length;i++){
+      if (line[i] === BLOCKED){
+        segments.push({vals:current, blocked:false});
+        segments.push({vals:null, blocked:true});
+        current = [];
+      } else {
+        current.push(line[i]);
+      }
+    }
+    segments.push({vals:current, blocked:false});
+
+    var finalLine = [];
+    segments.forEach(function(seg){
+      if (seg.blocked){
+        finalLine.push(BLOCKED);
+        return;
+      }
+      var nums = seg.vals.filter(function(v){return v !== null;});
+      var merged = [];
+      var skip = false;
+      for (var j=0;j<nums.length;j++){
+        if (skip){ skip = false; continue; }
+        if (j+1 < nums.length && nums[j] === nums[j+1]){
+          var newVal = nums[j]*2;
+          merged.push(newVal);
+          gained += newVal;
+          if (newVal === WIN_VALUE) madeWin = true;
+          skip = true;
+        } else {
+          merged.push(nums[j]);
+        }
+      }
+      while (merged.length < seg.vals.length) merged.push(null);
+      finalLine = finalLine.concat(merged);
+    });
+
+    // detect if moved
+    for (var k=0;k<line.length;k++){
+      if (line[k] !== finalLine[k]) { moved = true; break; }
+    }
+
+    return {line: finalLine, gained: gained, moved: moved, madeWin: madeWin};
+  }
+
+  function getColumn(board, c){
+    var col = [];
+    for (var r=0;r<SIZE;r++) col.push(board[r][c]);
+    return col;
+  }
+  function setColumn(board, c, col){
+    for (var r=0;r<SIZE;r++) board[r][c] = col[r];
+  }
+  function reverseArr(a){ return a.slice().reverse(); }
+
+  function move(direction){
+    if (state.over) return;
+    var board = state.board;
+    var totalGain = 0;
+    var anyMoved = false;
+    var anyWin = false;
+
+    if (direction === "left" || direction === "right"){
+      for (var r=0;r<SIZE;r++){
+        var line = board[r].slice();
+        if (direction === "right") line = reverseArr(line);
+        var res = processLineLeft(line);
+        var finalLine = res.line;
+        if (direction === "right") finalLine = reverseArr(finalLine);
+        board[r] = finalLine;
+        if (res.moved) anyMoved = true;
+        totalGain += res.gained;
+        if (res.madeWin) anyWin = true;
+      }
+    } else {
+      for (var c=0;c<SIZE;c++){
+        var col = getColumn(board, c);
+        if (direction === "down") col = reverseArr(col);
+        var res2 = processLineLeft(col);
+        var finalCol = res2.line;
+        if (direction === "down") finalCol = reverseArr(finalCol);
+        setColumn(board, c, finalCol);
+        if (res2.moved) anyMoved = true;
+        totalGain += res2.gained;
+        if (res2.madeWin) anyWin = true;
+      }
+    }
+
+    if (!anyMoved) return;
+
+    state.score += totalGain;
+    if (state.score > state.best){
+      state.best = state.score;
+      try { localStorage.setItem("dental2048_best", String(state.best)); } catch(e){}
+    }
+
+    if (anyWin){
+      state.over = true;
+      render();
+      setTimeout(function(){ showLevelComplete(); }, 220);
+      return;
+    }
+
+    spawnRandom();
+    render();
+
+    if (!hasMoves()){
+      state.over = true;
+      setTimeout(function(){ showGameOver(); }, 200);
+    }
+  }
+
+  function hasMoves(){
+    var board = state.board;
+    if (emptyCells().length > 0) return true;
+    // check any adjacent equal (not across blocked)
+    for (var r=0;r<SIZE;r++){
+      for (var c=0;c<SIZE;c++){
+        var v = board[r][c];
+        if (v === null || v === BLOCKED) continue;
+        if (c+1<SIZE && board[r][c+1] === v) return true;
+        if (r+1<SIZE && board[r+1][c] === v) return true;
+      }
+    }
+    return false;
+  }
+
+  function render(){
+    levelValEl.textContent = toFa(state.level) + " / " + toFa(TOTAL_LEVELS);
+    scoreValEl.textContent = toFa(state.score);
+    bestValEl.textContent = toFa(state.best);
+
+    jawProgressEl.innerHTML = "";
+    for (var i=1;i<=TOTAL_LEVELS;i++){
+      var d = document.createElement("div");
+      d.className = "tooth-dot" + (i < state.level ? " done" : "") + (i === state.level ? " current" : "");
+      d.textContent = toFa(i);
+      jawProgressEl.appendChild(d);
+    }
+
+    boardTilesEl.innerHTML = "";
+    for (var r=0;r<SIZE;r++){
+      for (var c=0;c<SIZE;c++){
+        var v = state.board[r][c];
+        var tile = document.createElement("div");
+        if (v === BLOCKED){
+          tile.className = "tile blocked";
+          tile.innerHTML = '<div class="icon">🦠</div><div class="name">دندون خراب</div>';
+        } else if (v !== null){
+          var info = TILE_INFO[v];
+          tile.className = "tile " + (info ? info.cls : "v2");
+          tile.innerHTML = '<div class="icon">' + (info?info.icon:"❓") + '</div><div class="name">' + (info?info.name:v) + '</div>';
+        } else {
+          tile.style.visibility = "hidden";
+        }
+        tile.style.gridRowStart = r+1;
+        tile.style.gridColumnStart = c+1;
+        boardTilesEl.appendChild(tile);
+      }
+    }
+  }
+
+  function showLevelComplete(){
+    if (state.level >= TOTAL_LEVELS){
+      overlayIconEl.textContent = "🎉";
+      overlayTitleEl.textContent = "درمان کامل شد!";
+      overlayTextEl.textContent = "همه‌ی ۵ مرحله رو تموم کردی و بیمار رو نجات دادی. امتیاز نهایی: " + toFa(state.score);
+      overlayBtnEl.textContent = "شروع دوباره از مرحله ۱";
+      overlayBtnEl.onclick = function(){ hideOverlay(); startLevel(1); state.score = 0; render(); };
+    } else {
+      overlayIconEl.textContent = "🦷";
+      overlayTitleEl.textContent = "مرحله " + toFa(state.level) + " تموم شد!";
+      overlayTextEl.textContent = "دو تا دندون سالم رو با هم ادغام کردی. آماده‌ی مرحله بعد؟";
+      overlayBtnEl.textContent = "برو مرحله " + toFa(state.level+1);
+      overlayBtnEl.onclick = function(){ hideOverlay(); startLevel(state.level+1); };
+    }
+    overlayEl.classList.add("show");
+  }
+
+  function showGameOver(){
+    overlayIconEl.textContent = "😬";
+    overlayTitleEl.textContent = "جا خالی نمونده!";
+    overlayTextEl.textContent = "دیگه حرکتی ممکن نیست. همین مرحله رو دوباره امتحان کن.";
+    overlayBtnEl.textContent = "امتحان دوباره";
+    overlayBtnEl.onclick = function(){ hideOverlay(); startLevel(state.level); };
+    overlayEl.classList.add("show");
+  }
+
+  function hideOverlay(){
+    overlayEl.classList.remove("show");
+  }
+
+  document.addEventListener("keydown", function(e){
+    var map = {
+      ArrowLeft:"left", ArrowRight:"right", ArrowUp:"up", ArrowDown:"down"
+    };
+    if (map[e.key]){
+      e.preventDefault();
+      move(map[e.key]);
+    }
+  });
+
+  // touch swipe support
+  var touchStartX=null, touchStartY=null;
+  document.addEventListener("touchstart", function(e){
+    var t = e.touches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+  }, {passive:true});
+  document.addEventListener("touchend", function(e){
+    if (touchStartX === null) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - touchStartX;
+    var dy = t.clientY - touchStartY;
+    var absX = Math.abs(dx), absY = Math.abs(dy);
+    if (Math.max(absX,absY) > 24){
+      if (absX > absY){
+        move(dx > 0 ? "right" : "left");
+      } else {
+        move(dy > 0 ? "down" : "up");
+      }
+    }
+    touchStartX = null; touchStartY = null;
+  }, {passive:true});
+
+  document.getElementById("restartBtn").addEventListener("click", function(){
+    startLevel(state.level);
+  });
+  document.getElementById("restartAllBtn").addEventListener("click", function(){
+    state.score = 0;
+    startLevel(1);
+  });
+
+  startLevel(1);
+})();
+</script>
+</body>
+</html>
