@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>۲۰۴۸ دندونپزشکی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0F3D3E;
+    --bg-deep-2:#0B2E2F;
+    --cream:#FBF6EC;
+    --cream-dim:#EFE7D6;
+    --mint:#4FD1C5;
+    --mint-dark:#2E9C92;
+    --coral:#E85D4C;
+    --gold:#D4AF37;
+    --ink:#123130;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(79,209,197,0.12), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(212,175,55,0.10), transparent 45%),
+      var(--bg-deep);
+    color:var(--cream);
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px 14px 60px;
+  }
+
+  .chart-header{
+    width:100%;
+    max-width:460px;
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--mint);
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  h1{
+    font-size:26px;
+    font-weight:900;
+    margin:0 0 10px;
+    color:var(--cream);
+  }
+  h1 span{color:var(--mint);}
+
+  .jaw-progress{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:10px 0 4px;
+  }
+  .tooth-dot{
+    width:26px;height:30px;
+    border-radius:40% 40% 45% 45%;
+    background:var(--cream-dim);
+    opacity:.35;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;color:var(--ink);
+    transition:all .3s ease;
+  }
+  .tooth-dot.done{opacity:1;background:var(--mint);color:var(--ink);box-shadow:0 0 10px rgba(79,209,197,.6);}
+  .tooth-dot.current{opacity:1;background:var(--gold);color:var(--ink);transform:scale(1.15);box-shadow:0 0 12px rgba(212,175,55,.7);}
+
+  .stat-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin:10px 0 16px;
+  }
+  .stat-box{
+    background:var(--bg-deep-2);
+    border:1px solid rgba(79,209,197,.25);
+    border-radius:10px;
+    padding:6px 16px;
+    text-align:center;
+    min-width:84px;
+  }
+  .stat-box .lbl{font-size:11px;color:var(--mint);letter-spacing:1px;}
+  .stat-box .val{font-size:19px;font-weight:700;}
+
+  .goal-note{
+    font-size:12.5px;
+    color:var(--cream-dim);
+    opacity:.85;
+    max-width:380px;
+    margin:0 0 16px;
+    line-height:1.9;
+  }
+  .goal-note b{color:var(--gold);}
+
+  /* ---- board: forced LTR so left/right always match the visual grid,
+         regardless of the page's RTL direction ---- */
+  .board-wrap{
+    position:relative;
+    direction:ltr;
+    background:linear-gradient(160deg, var(--bg-deep-2), #082324);
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 20px 40px rgba(0,0,0,.35), inset 0 0 0 1px rgba(79,209,197,.15);
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(60px,78px));
+    grid-template-rows:repeat(4, minmax(60px,78px));
+    gap:10px;
+    direction:ltr;
+  }
+  .cell{
+    background:rgba(251,246,236,0.06);
+    border-radius:12px;
+  }
+  .board-tiles{
+    position:absolute;
+    inset:12px;
+    direction:ltr;
+    pointer-events:none;
+  }
+
+  .tile-slot{
+    position:absolute;
+    top:0; left:0;
+    transition:transform 110ms cubic-bezier(.2,.75,.3,1);
+    will-change:transform;
+  }
+  .tile-face{
+    width:100%;
+    height:100%;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:2px;
+    font-weight:700;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+    padding:4px;
+    line-height:1.15;
+  }
+  .tile-face .icon{
+    width:60%;
+    max-width:44px;
+    aspect-ratio:1/1;
+    object-fit:contain;
+    display:block;
+  }
+  .tile-face .name{font-size:9.5px;color:var(--ink);opacity:.85;}
+
+  .tile-face.v2{background:var(--cream);color:var(--ink);}
+  .tile-face.v4{background:#EAD9B8;color:var(--ink);}
+  .tile-face.v8{background:#B7E4DE;color:var(--ink);}
+  .tile-face.v16{background:#8FD4C9;color:var(--ink);}
+  .tile-face.v32{background:#4FD1C5;color:var(--ink);}
+  .tile-face.v64{background:#2E9C92;color:var(--cream);}
+  .tile-face.v128{background:#F0A94E;color:var(--ink);}
+  .tile-face.v256{background:#E8814C;color:var(--cream);}
+  .tile-face.v512{
+    background:linear-gradient(150deg, var(--gold), #F4E28C);
+    color:var(--ink);
+    box-shadow:0 0 18px rgba(212,175,55,.75), 0 4px 10px rgba(0,0,0,.25);
+  }
+  .tile-face.v512 .icon{max-width:50px;}
+  .tile-face.blocked{
+    background:repeating-linear-gradient(135deg, #3a1414, #3a1414 6px, #2a0d0d 6px, #2a0d0d 12px);
+    color:var(--coral);
+    border:2px solid var(--coral);
+  }
+  .tile-face.blocked .name{color:var(--coral);opacity:1;}
+
+  @keyframes spawnPop{
+    0%{transform:scale(.35);opacity:.2;}
+    75%{transform:scale(1.08);opacity:1;}
+    100%{transform:scale(1);opacity:1;}
+  }
+  @keyframes mergedPop{
+    0%{transform:scale(1);}
+    35%{transform:scale(1.18);}
+    100%{transform:scale(1);}
+  }
+  .tile-face.spawn-pop{animation:spawnPop 180ms ease-out;}
+  .tile-face.merged-pop{animation:mergedPop 170ms ease-out;}
+
+  .controls{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  button{
+    font-family:inherit;
+    font-weight:700;
+    font-size:13.5px;
+    border:none;
+    border-radius:10px;
+    padding:10px 18px;
+    cursor:pointer;
+    background:var(--mint);
+    color:var(--ink);
+    transition:transform .12s ease, background .2s;
+  }
+  button:hover{transform:translateY(-1px);}
+  button.secondary{
+    background:transparent;
+    color:var(--cream);
+    border:1px solid rgba(251,246,236,.35);
+  }
+
+  .hint{
+    margin-top:14px;
+    font-size:11.5px;
+    color:var(--cream-dim);
+    opacity:.6;
+    text-align:center;
+  }
+
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(5,20,20,.86);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .overlay-card{
+    background:var(--bg-deep-2);
+    border:1px solid rgba(79,209,197,.3);
+    border-radius:16px;
+    padding:30px 26px;
+    max-width:340px;
+    text-align:center;
+  }
+  .overlay-card .big{font-size:44px;margin-bottom:6px;}
+  .overlay-card h2{margin:0 0 8px;font-size:20px;color:var(--gold);}
+  .overlay-card p{font-size:13.5px;color:var(--cream-dim);line-height:1.9;margin:0 0 18px;}
+
+  @media (max-width:380px){
+    .board{grid-template-columns:repeat(4, minmax(52px,66px));grid-template-rows:repeat(4, minmax(52px,66px));gap:8px;}
+    .tile-face .icon{max-width:34px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="chart-header">
+    <div class="eyebrow">پرونده‌ی درمان</div>
+    <h1>۲۰۴۸ <span>دندونپزشکی</span></h1>
+    <div class="jaw-progress" id="jawProgress"></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-box"><div class="lbl">مرحله</div><div class="val" id="levelVal">۱ / ۵</div></div>
+    <div class="stat-box"><div class="lbl">امتیاز</div><div class="val" id="scoreVal">۰</div></div>
+    <div class="stat-box"><div class="lbl">رکورد</div><div class="val" id="bestVal">۰</div></div>
+  </div>
+
+  <div class="goal-note" id="goalNote">
+    دو تا <b>دندون سالم 🦷</b> رو تو هم ادغام کن تا بری مرحله بعد. مرحله‌ی اول یه <b>دندون خرابِ</b> مسدود بالا-راستِ جدول داره؛ نمی‌تونی اون خونه رو حرکت بدی!
+  </div>
+
+  <div class="board-wrap" id="boardWrap">
+    <div class="board" id="boardBg"></div>
+    <div class="board-tiles" id="boardTiles"></div>
+  </div>
+
+  <div class="controls">
+    <button id="restartBtn">شروع دوباره مرحله</button>
+    <button class="secondary" id="restartAllBtn">شروع کل بازی</button>
+  </div>
+
+  <div class="hint">با کلیدهای جهت‌دار یا کشیدن انگشت روی تخته بازی کن</div>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-card">
+      <div class="big" id="overlayIcon">🦷</div>
+      <h2 id="overlayTitle">مرحله تکمیل شد!</h2>
+      <p id="overlayText">آفرین، دندون سالم ساختی.</p>
+      <button id="overlayBtn">برو مرحله بعد</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SIZE = 4;
+  var TOTAL_LEVELS = 5;
+  var WIN_VALUE = 1024; // created when two 512 (healthy tooth) tiles merge -> triggers level up
+  var SLIDE_MS = 110;   // must match CSS transition duration
+
+  // Put your image files in an "icons" folder next to index.html, named
+  // exactly as below (png/jpg/webp/svg all work — just keep the filename
+  // the same or update the path here). Recommended: square images, at
+  // least 120x120px, transparent background if possible.
+  var TILE_INFO = {
+    2:   {img:"icons/2-mesvak.png",          name:"مسواک",              cls:"v2"},
+    4:   {img:"icons/4-dahanshooye.png",     name:"دهان‌شویه",           cls:"v4"},
+    8:   {img:"icons/8-aeine.png",           name:"آینه دندونپزشکی",     cls:"v8"},
+    16:  {img:"icons/16-pens.png",           name:"پنس",                cls:"v16"},
+    32:  {img:"icons/32-torbin.png",         name:"توربین",             cls:"v32"},
+    64:  {img:"icons/64-rookesh.png",        name:"روکش SS اطفال",      cls:"v64"},
+    128: {img:"icons/128-serang.png",        name:"سرنگ تزریق",         cls:"v128"},
+    256: {img:"icons/256-yoonit.png",        name:"یونیت",              cls:"v256"},
+    512: {img:"icons/512-dandan-salem.png",  name:"دندون سالم",         cls:"v512"}
+  };
+  var BLOCKED_IMG = "icons/blocked-dandan-kharab.png";
+
+  var faDigits = ["۰","۱","۲","۳","۴","۵","۶","۷","۸","۹"];
+  function toFa(n){
+    return String(n).split("").map(function(d){
+      return /[0-9]/.test(d) ? faDigits[+d] : d;
+    }).join("");
+  }
+
+  var state = {
+    level: 1,
+    score: 0,
+    best: 0,
+    tiles: {},   // id -> {id, value, row, col}
+    blocked: null, // {row, col} or null
+    over: false,
+    busy: false  // true while an animation is in flight (input ignored)
+  };
+  var nextId = 1;
+
+  try {
+    var savedBest = localStorage.getItem("dental2048_best");
+    if (savedBest) state.best = parseInt(savedBest,10) || 0;
+  } catch(e){}
+
+  var boardBgEl = document.getElementById("boardBg");
+  var boardTilesEl = document.getElementById("boardTiles");
+  var boardWrapEl = document.getElementById("boardWrap");
+  var levelValEl = document.getElementById("levelVal");
+  var scoreValEl = document.getElementById("scoreVal");
+  var bestValEl = document.getElementById("bestVal");
+  var jawProgressEl = document.getElementById("jawProgress");
+  var overlayEl = document.getElementById("overlay");
+  var overlayIconEl = document.getElementById("overlayIcon");
+  var overlayTitleEl = document.getElementById("overlayTitle");
+  var overlayTextEl = document.getElementById("overlayText");
+  var overlayBtnEl = document.getElementById("overlayBtn");
+
+  var tileEls = {}; // id -> {slot, face}
+  var blockedEl = null;
+
+  for (var i=0;i<SIZE*SIZE;i++){
+    var c = document.createElement("div");
+    c.className = "cell";
+    boardBgEl.appendChild(c);
+  }
+
+  // ---- geometry: measure actual rendered cells so it matches the CSS breakpoints ----
+  function cellGeometry(row, col){
+    var idx = row*SIZE + col;
+    var cellEl = boardBgEl.children[idx];
+    var cellRect = cellEl.getBoundingClientRect();
+    var wrapRect = boardTilesEl.getBoundingClientRect();
+    return {
+      x: cellRect.left - wrapRect.left,
+      y: cellRect.top - wrapRect.top,
+      w: cellRect.width,
+      h: cellRect.height
+    };
+  }
+
+  function placeSlot(slotEl, row, col){
+    var g = cellGeometry(row, col);
+    slotEl.style.width = g.w + "px";
+    slotEl.style.height = g.h + "px";
+    slotEl.style.transform = "translate(" + g.x + "px," + g.y + "px)";
+  }
+
+  function repositionAll(){
+    Object.keys(tileEls).forEach(function(id){
+      var t = state.tiles[id];
+      if (!t) return;
+      placeSlot(tileEls[id].slot, t.row, t.col);
+    });
+    if (blockedEl && state.blocked){
+      placeSlot(blockedEl, state.blocked.row, state.blocked.col);
+    }
+  }
+  window.addEventListener("resize", repositionAll);
+
+  function makeFaceHtml(value){
+    var info = TILE_INFO[value];
+    var imgSrc = info ? info.img : "";
+    return '<div class="tile-face ' + (info?info.cls:"v2") + '">' +
+      '<img class="icon" src="' + imgSrc + '" alt="' + (info?info.name:value) + '" onerror="this.style.display=\'none\'">' +
+      '<div class="name">' + (info?info.name:value) + '</div></div>';
+  }
+
+  function createTileEl(tile, animClass){
+    var slot = document.createElement("div");
+    slot.className = "tile-slot";
+    slot.innerHTML = makeFaceHtml(tile.value);
+    boardTilesEl.appendChild(slot);
+    placeSlot(slot, tile.row, tile.col);
+    var face = slot.firstChild;
+    if (animClass) face.classList.add(animClass);
+    tileEls[tile.id] = {slot: slot, face: face};
+  }
+
+  function removeTileEl(id){
+    var rec = tileEls[id];
+    if (rec && rec.slot.parentNode) rec.slot.parentNode.removeChild(rec.slot);
+    delete tileEls[id];
+  }
+
+  function createBlockedEl(){
+    if (blockedEl){ blockedEl.remove(); blockedEl=null; }
+    if (!state.blocked) return;
+    var slot = document.createElement("div");
+    slot.className = "tile-slot";
+    slot.innerHTML = '<div class="tile-face blocked"><img class="icon" src="' + BLOCKED_IMG + '" alt="دندون خراب" onerror="this.style.display=\'none\'"><div class="name">دندون خراب</div></div>';
+    boardTilesEl.appendChild(slot);
+    placeSlot(slot, state.blocked.row, state.blocked.col);
+    blockedEl = slot;
+  }
+
+  function isOccupied(row,col){
+    if (state.blocked && state.blocked.row===row && state.blocked.col===col) return true;
+    for (var id in state.tiles){
+      var t = state.tiles[id];
+      if (t.row===row && t.col===col) return true;
+    }
+    return false;
+  }
+  function tileAt(row,col){
+    for (var id in state.tiles){
+      var t = state.tiles[id];
+      if (t.row===row && t.col===col) return t;
+    }
+    return null;
+  }
+
+  function startLevel(level){
+    state.level = level;
+    state.tiles = {};
+    state.blocked = (level === 1) ? {row:0, col:3} : null;
+    state.over = false;
+    state.busy = false;
+    boardTilesEl.innerHTML = "";
+    tileEls = {};
+    blockedEl = null;
+    createBlockedEl();
+    spawnRandom();
+    spawnRandom();
+    renderStats();
+  }
+
+  function emptyCells(){
+    var cells = [];
+    for (var r=0;r<SIZE;r++){
+      for (var c=0;c<SIZE;c++){
+        if (!isOccupied(r,c)) cells.push([r,c]);
+      }
+    }
+    return cells;
+  }
+
+  function spawnRandom(){
+    var cells = emptyCells();
+    if (cells.length === 0) return false;
+    var pick = cells[Math.floor(Math.random()*cells.length)];
+    var value = Math.random() < 0.9 ? 2 : 4;
+    var tile = {id: "t"+(nextId++), value: value, row: pick[0], col: pick[1]};
+    state.tiles[tile.id] = tile;
+    createTileEl(tile, "spawn-pop");
+    return true;
+  }
+
+  // build the ordered list of [row,col] cells for a given line, in the
+  // direction of travel (index 0 = where tiles compact towards)
+  function buildLines(direction){
+    var lines = [];
+    if (direction === "left" || direction === "right"){
+      for (var r=0;r<SIZE;r++){
+        var cells = [];
+        for (var c=0;c<SIZE;c++) cells.push([r,c]);
+        if (direction === "right") cells.reverse();
+        lines.push(cells);
+      }
+    } else {
+      for (var c2=0;c2<SIZE;c2++){
+        var cells2 = [];
+        for (var r2=0;r2<SIZE;r2++) cells2.push([r2,c2]);
+        if (direction === "down") cells2.reverse();
+        lines.push(cells2);
+      }
+    }
+    return lines;
+  }
+
+  function move(direction){
+    if (state.over || state.busy) return;
+
+    var lines = buildLines(direction);
+    var moves = [];        // {tile, toRow, toCol}
+    var mergeEvents = [];  // {removeIds:[a,b], row, col, value}
+    var gained = 0;
+    var madeWin = false;
+    var anyChange = false;
+
+    lines.forEach(function(cells){
+      // split line into segments at blocked cells
+      var segments = [];
+      var current = [];
+      cells.forEach(function(rc){
+        if (state.blocked && state.blocked.row===rc[0] && state.blocked.col===rc[1]){
+          segments.push(current);
+          current = [];
+        } else {
+          current.push(rc);
+        }
+      });
+      segments.push(current);
+
+      segments.forEach(function(segCells){
+        var segTiles = [];
+        segCells.forEach(function(rc){
+          var t = tileAt(rc[0], rc[1]);
+          if (t) segTiles.push(t);
+        });
+
+        var slot = 0;
+        var i = 0;
+        while (i < segTiles.length){
+          var a = segTiles[i];
+          var b = segTiles[i+1];
+          var target = segCells[slot];
+          if (b && a.value === b.value){
+            moves.push({tile:a, toRow:target[0], toCol:target[1]});
+            moves.push({tile:b, toRow:target[0], toCol:target[1]});
+            var newVal = a.value * 2;
+            mergeEvents.push({removeIds:[a.id,b.id], row:target[0], col:target[1], value:newVal});
+            gained += newVal;
+            if (newVal === WIN_VALUE) madeWin = true;
+            if (a.row!==target[0]||a.col!==target[1]||b.row!==target[0]||b.col!==target[1]) anyChange = true;
+            anyChange = true; // a merge always counts as a change
+            i += 2;
+          } else {
+            moves.push({tile:a, toRow:target[0], toCol:target[1]});
+            if (a.row!==target[0] || a.col!==target[1]) anyChange = true;
+            i += 1;
+          }
+          slot += 1;
+        }
+      });
+    });
+
+    if (!anyChange) return;
+
+    state.busy = true;
+
+    // phase 1: slide everything (including merging pairs) to their target cell
+    moves.forEach(function(m){
+      m.tile.row = m.toRow;
+      m.tile.col = m.toCol;
+      var rec = tileEls[m.tile.id];
+      if (rec) placeSlot(rec.slot, m.toRow, m.toCol);
+    });
+
+    setTimeout(function(){
+      // phase 2: resolve merges - remove the two source tiles, spawn the merged tile
+      mergeEvents.forEach(function(ev){
+        ev.removeIds.forEach(function(id){
+          delete state.tiles[id];
+          removeTileEl(id);
+        });
+        var merged = {id:"t"+(nextId++), value:ev.value, row:ev.row, col:ev.col};
+        state.tiles[merged.id] = merged;
+        createTileEl(merged, "merged-pop");
+      });
+
+      state.score += gained;
+      if (state.score > state.best){
+        state.best = state.score;
+        try { localStorage.setItem("dental2048_best", String(state.best)); } catch(e){}
+      }
+
+      if (madeWin){
+        state.over = true;
+        state.busy = false;
+        renderStats();
+        setTimeout(showLevelComplete, 200);
+        return;
+      }
+
+      spawnRandom();
+      renderStats();
+      state.busy = false;
+
+      if (!hasMoves()){
+        state.over = true;
+        setTimeout(showGameOver, 200);
+      }
+    }, SLIDE_MS);
+  }
+
+  function hasMoves(){
+    if (emptyCells().length > 0) return true;
+    for (var r=0;r<SIZE;r++){
+      for (var c=0;c<SIZE;c++){
+        if (state.blocked && state.blocked.row===r && state.blocked.col===c) continue;
+        var t = tileAt(r,c);
+        if (!t) continue;
+        var right = (c+1<SIZE && !(state.blocked && state.blocked.row===r && state.blocked.col===c+1)) ? tileAt(r,c+1) : null;
+        if (right && right.value === t.value) return true;
+        var down = (r+1<SIZE && !(state.blocked && state.blocked.row===r+1 && state.blocked.col===c)) ? tileAt(r+1,c) : null;
+        if (down && down.value === t.value) return true;
+      }
+    }
+    return false;
+  }
+
+  function renderStats(){
+    levelValEl.textContent = toFa(state.level) + " / " + toFa(TOTAL_LEVELS);
+    scoreValEl.textContent = toFa(state.score);
+    bestValEl.textContent = toFa(state.best);
+
+    jawProgressEl.innerHTML = "";
+    for (var i=1;i<=TOTAL_LEVELS;i++){
+      var d = document.createElement("div");
+      d.className = "tooth-dot" + (i < state.level ? " done" : "") + (i === state.level ? " current" : "");
+      d.textContent = toFa(i);
+      jawProgressEl.appendChild(d);
+    }
+  }
+
+  function showLevelComplete(){
+    if (state.level >= TOTAL_LEVELS){
+      overlayIconEl.textContent = "🎉";
+      overlayTitleEl.textContent = "درمان کامل شد!";
+      overlayTextEl.textContent = "همه‌ی ۵ مرحله رو تموم کردی و بیمار رو نجات دادی. امتیاز نهایی: " + toFa(state.score);
+      overlayBtnEl.textContent = "شروع دوباره از مرحله ۱";
+      overlayBtnEl.onclick = function(){ hideOverlay(); state.score = 0; startLevel(1); };
+    } else {
+      overlayIconEl.textContent = "🦷";
+      overlayTitleEl.textContent = "مرحله " + toFa(state.level) + " تموم شد!";
+      overlayTextEl.textContent = "دو تا دندون سالم رو با هم ادغام کردی. آماده‌ی مرحله بعد؟";
+      overlayBtnEl.textContent = "برو مرحله " + toFa(state.level+1);
+      overlayBtnEl.onclick = function(){ hideOverlay(); startLevel(state.level+1); };
+    }
+    overlayEl.classList.add("show");
+  }
+
+  function showGameOver(){
+    overlayIconEl.textContent = "😬";
+    overlayTitleEl.textContent = "جا خالی نمونده!";
+    overlayTextEl.textContent = "دیگه حرکتی ممکن نیست. همین مرحله رو دوباره امتحان کن.";
+    overlayBtnEl.textContent = "امتحان دوباره";
+    overlayBtnEl.onclick = function(){ hideOverlay(); startLevel(state.level); };
+    overlayEl.classList.add("show");
+  }
+
+  function hideOverlay(){
+    overlayEl.classList.remove("show");
+  }
+
+  document.addEventListener("keydown", function(e){
+    var map = { ArrowLeft:"left", ArrowRight:"right", ArrowUp:"up", ArrowDown:"down" };
+    if (map[e.key]){
+      e.preventDefault();
+      move(map[e.key]);
+    }
+  });
+
+  // swipe support, scoped to the board itself (touch-action:none on
+  // .board-wrap stops the browser from hijacking the gesture as a page scroll)
+  var touchStartX=null, touchStartY=null;
+  boardWrapEl.addEventListener("touchstart", function(e){
+    var t = e.touches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+  }, {passive:true});
+  boardWrapEl.addEventListener("touchend", function(e){
+    if (touchStartX === null) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - touchStartX;
+    var dy = t.clientY - touchStartY;
+    var absX = Math.abs(dx), absY = Math.abs(dy);
+    if (Math.max(absX,absY) > 20){
+      if (absX > absY){
+        move(dx > 0 ? "right" : "left");
+      } else {
+        move(dy > 0 ? "down" : "up");
+      }
+    }
+    touchStartX = null; touchStartY = null;
+  }, {passive:true});
+
+  document.getElementById("restartBtn").addEventListener("click", function(){
+    startLevel(state.level);
+  });
+  document.getElementById("restartAllBtn").addEventListener("click", function(){
+    state.score = 0;
+    startLevel(1);
+  });
+
+  startLevel(1);
+})();
+</script>
+</body>
+</html>
