@@ -488,7 +488,7 @@
     if (!state.blocked) return;
     var slot = document.createElement("div");
     slot.className = "tile-slot";
-    slot.innerHTML = '<div class="tile-face blocked"><img class="icon" src="' + BLOCKED_IMG + '" alt="" onerror="this.style.display=\'none\'"><div class="name">دندون خراب</div></div>';
+    slot.innerHTML = '<div class="tile-face blocked"><img class="icon" src="' + BLOCKED_IMG + '" alt="" onerror="this.style.display=\'none\'"><div class="name"></div></div>';
     boardTilesEl.appendChild(slot);
     placeSlot(slot, state.blocked.row, state.blocked.col);
     blockedEl = slot;
