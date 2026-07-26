@@ -228,7 +228,7 @@
     color:var(--ink);
     box-shadow:0 0 18px rgba(212,175,55,.75), 0 4px 10px rgba(0,0,0,.25);
   }
-  .tile-face.v512 .icon{max-width:50px;}
+  .tile-face.v512 .icon{max-width:150px;}
   .tile-face.blocked{
     background:repeating-linear-gradient(135deg, #3a1414, #3a1414 6px, #2a0d0d 6px, #2a0d0d 12px);
     color:var(--coral);
@@ -326,7 +326,6 @@
   </div>
 
   <div class="goal-note" id="goalNote">
-    دو تا <b>دندون سالم 🦷</b> رو تو هم ادغام کن تا بری مرحله بعد. مرحله‌ی اول یه <b>دندون خرابِ</b> مسدود بالا-راستِ جدول داره؛ نمی‌تونی اون خونه رو حرکت بدی!
   </div>
 
   <button class="secondary guide-toggle" id="guideBtn">نمایش ترتیب ادغام 🔽</button>
@@ -367,15 +366,15 @@
   // the same or update the path here). Recommended: square images, at
   // least 120x120px, transparent background if possible.
   var TILE_INFO = {
-    2:   {img:"icons/2-mesvak.png",          name:"مسواک",              cls:"v2"},
-    4:   {img:"icons/4-dahanshooye.png",     name:"دهان‌شویه",           cls:"v4"},
-    8:   {img:"icons/8-aeine.png",           name:"آینه دندونپزشکی",     cls:"v8"},
-    16:  {img:"icons/16-pens.png",           name:"پنس",                cls:"v16"},
-    32:  {img:"icons/32-torbin.png",         name:"توربین",             cls:"v32"},
-    64:  {img:"icons/64-rookesh.png",        name:"روکش SS اطفال",      cls:"v64"},
-    128: {img:"icons/128-serang.png",        name:"سرنگ تزریق",         cls:"v128"},
-    256: {img:"icons/256-yoonit.png",        name:"یونیت",              cls:"v256"},
-    512: {img:"icons/512-dandan-salem.png",  name:"دندون سالم",         cls:"v512"}
+    2:   {img:"icons/2-mesvak.png",          name:"",              cls:"v2"},
+    4:   {img:"icons/4-dahanshooye.png",     name:"",           cls:"v4"},
+    8:   {img:"icons/8-aeine.png",           name:"",     cls:"v8"},
+    16:  {img:"icons/16-pens.png",           name:"",                cls:"v16"},
+    32:  {img:"icons/32-torbin.png",         name:"",             cls:"v32"},
+    64:  {img:"icons/64-rookesh.png",        name:"",      cls:"v64"},
+    128: {img:"icons/128-serang.png",        name:"",         cls:"v128"},
+    256: {img:"icons/256-yoonit.png",        name:"",              cls:"v256"},
+    512: {img:"icons/512-dandan-salem.png",  name:"",         cls:"v512"}
   };
   var BLOCKED_IMG = "icons/blocked-dandan-kharab.png";
 
